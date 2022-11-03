@@ -1,8 +1,13 @@
-import { Module } from '@nestjs/common';
-import { TelegrafModule } from 'nestjs-telegraf';
-import * as LocalSession from 'telegraf-session-local';
-import { AppUpdate } from './app.update';
-import { AppService } from './app.service';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { TelegrafModule } from 'nestjs-telegraf'
+import { join } from 'path'
+import * as LocalSession from 'telegraf-session-local'
+import { AppService } from './app.service'
+import { AppUpdate } from './app.update'
+import { TG_TOKEN } from './config'
+import { TaskEntity } from './task.entity'
+
 
 const sessions = new LocalSession({database: 'session_db.json'});
 
@@ -10,8 +15,20 @@ const sessions = new LocalSession({database: 'session_db.json'});
   imports: [
     TelegrafModule.forRoot({
       middlewares: [sessions.middleware()],
-      token: '5608720075:AAFSxSXmtRBcqdro7RqcZThgafYi2Eh9FhM', 
-    })
+      token: TG_TOKEN, 
+    }),
+    TypeOrmModule.forRoot({
+			type: 'postgres',
+			host: 'localhost',
+			port: 5432,
+			database: 'TodoAppTelegram',
+			username: 'postgres',
+			password: 'root',
+			entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+			migrations: [join(__dirname, '**', '*.migration.{ts,js}')],
+			synchronize: true
+		}),
+		TypeOrmModule.forFeature([TaskEntity])
   ],
   controllers: [],
   providers: [AppService, AppUpdate],
