@@ -8,20 +8,19 @@ import { AppUpdate } from './app.update'
 import { TG_TOKEN } from './config'
 import { TaskEntity } from './task.entity'
 
-
-const sessions = new LocalSession({database: 'session_db.json'});
+const sessions = new LocalSession({ database: 'session_db.json' })
 
 @Module({
-  imports: [
-    TelegrafModule.forRoot({
-      middlewares: [sessions.middleware()],
-      token: TG_TOKEN, 
-    }),
-    TypeOrmModule.forRoot({
+	imports: [
+		TelegrafModule.forRoot({
+			middlewares: [sessions.middleware()],
+			token: TG_TOKEN
+		}),
+		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: 'localhost',
 			port: 5432,
-			database: 'TodoAppTelegram',
+			database: 'todo-app-tg-bot',
 			username: 'postgres',
 			password: 'root',
 			entities: [join(__dirname, '**', '*.entity.{ts,js}')],
@@ -29,8 +28,7 @@ const sessions = new LocalSession({database: 'session_db.json'});
 			synchronize: true
 		}),
 		TypeOrmModule.forFeature([TaskEntity])
-  ],
-  controllers: [],
-  providers: [AppService, AppUpdate],
+	],
+	providers: [AppService, AppUpdate]
 })
 export class AppModule {}

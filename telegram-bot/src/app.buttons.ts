@@ -1,22 +1,16 @@
-import { Markup } from 'telegraf';
+import { Markup } from 'telegraf'
 
-
-export const listBtn = 'Список дел'
-export const doneBtn = '✅ Завершить';
-export const editBtn = 'Редактирование';
-export const deleteBtn = '❌ Удаление';
-
-
-export const actionButtons = () => {
-    return Markup.keyboard(
-        [
-            Markup.button.callback(listBtn, 'list'),
-            Markup.button.callback(doneBtn, 'done'),
-            Markup.button.callback(editBtn, 'edit'),
-            Markup.button.callback(deleteBtn, 'delete'),
-        ],
-        {
-            columns: 1
-        }
-    )
+export function actionButtons() {
+	return Markup.keyboard(
+		[
+			Markup.button.callback('⚡️ Создать задачу', 'create'),
+			Markup.button.callback('📋 Список задач', 'list'),
+			Markup.button.callback('✅ Завершить', 'done'),
+			Markup.button.callback('✏️ Редактирование', 'edit'),
+			Markup.button.callback('❌ Удаление', 'delete')
+		],
+		{
+			columns: 2
+		}
+	)
 }
