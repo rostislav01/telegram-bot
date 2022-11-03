@@ -8,7 +8,7 @@ import {
 	Update
 } from 'nestjs-telegraf'
 import { Telegraf } from 'telegraf'
-import { actionButtons } from './app.buttons'
+import { actionButtons, createButton, deleteButton, doneButton, editButton, listButton } from './app.buttons'
 import { AppService } from './app.service'
 import { showList } from './app.utils'
 import { Context } from './context.interface'
@@ -26,28 +26,28 @@ export class AppUpdate {
 		await ctx.reply('Что ты хочешь сделать?', actionButtons())
 	}
 
-	@Hears('⚡️ Создать задачу')
+	@Hears(createButton.text)
 	async createTask(ctx: Context) {
-		ctx.session.type = 'create'
+		ctx.session.type = createButton.type;
 		await ctx.reply('Опиши задачу: ')
 	}
 
-	@Hears('📋 Список задач')
+	@Hears(listButton.text)
 	async listTask(ctx: Context) {
 		const todos = await this.appService.getAll()
 		await ctx.reply(showList(todos))
 	}
 
-	@Hears('✅ Завершить')
+	@Hears(doneButton.text)
 	async doneTask(ctx: Context) {
-		ctx.session.type = 'done'
+		ctx.session.type = doneButton.type;
 		await ctx.deleteMessage()
 		await ctx.reply('Напиши ID задачи: ')
 	}
 
-	@Hears('✏️ Редактирование')
+	@Hears(editButton.text)
 	async editTask(ctx: Context) {
-		ctx.session.type = 'edit'
+		ctx.session.type = editButton.type;
 		await ctx.deleteMessage()
 		await ctx.replyWithHTML(
 			'Напиши ID и новое название задачи: \n\n' +
@@ -55,9 +55,9 @@ export class AppUpdate {
 		)
 	}
 
-	@Hears('❌ Удаление')
+	@Hears(deleteButton.text)
 	async deleteTask(ctx: Context) {
-		ctx.session.type = 'remove'
+		ctx.session.type = deleteButton.type;
 		await ctx.deleteMessage()
 		await ctx.reply('Напиши ID задачи: ')
 	}
@@ -66,12 +66,12 @@ export class AppUpdate {
 	async getMessage(@Message('text') message: string, @Ctx() ctx: Context) {
 		if (!ctx.session.type) return
 
-		if (ctx.session.type === 'create') {
+		if (ctx.session.type === createButton.type) {
 			const todos = await this.appService.createTask(message)
 			await ctx.reply(showList(todos))
 		}
 
-		if (ctx.session.type === 'done') {
+		if (ctx.session.type === doneButton.type) {
 			const todos = await this.appService.doneTask(Number(message))
 
 			if (!todos) {
@@ -83,8 +83,8 @@ export class AppUpdate {
 			await ctx.reply(showList(todos))
 		}
 
-		if (ctx.session.type === 'edit') {
-			const [taskId, taskName] = message.split(' | ')
+		if (ctx.session.type === editButton.type) {
+			const [taskId, taskName] = message.split(' - ')
 			const todos = await this.appService.editTask(Number(taskId), taskName)
 
 			if (!todos) {
@@ -96,7 +96,7 @@ export class AppUpdate {
 			await ctx.reply(showList(todos))
 		}
 
-		if (ctx.session.type === 'remove') {
+		if (ctx.session.type === deleteButton.type) {
 			const todos = await this.appService.deleteTask(Number(message))
 
 			if (!todos) {
