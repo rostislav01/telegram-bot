@@ -1,23 +1,25 @@
+import { stringify } from 'querystring'
 import { Markup } from 'telegraf'
+import { ButtonI } from './app.interface'
 
 
-export const createButton = {
+export const createButton: ButtonI = {
 	text: '⚡️ Создать задачу',
 	type: 'create'
 }
-export const listButton = {
+export const listButton: ButtonI = {
 	text: '📋 Список задач',
 	type: 'list'
 }
-export const doneButton = {
+export const doneButton: ButtonI = {
 	text: '✅ Завершить',
 	type: 'done'
 }
-export const editButton = {
+export const editButton: ButtonI = {
 	text: '✏️ Редактирование',
 	type: 'edit'
 }
-export const deleteButton = {
+export const deleteButton: ButtonI = {
 	text: '❌ Удаление',
 	type: 'delete'
 }
