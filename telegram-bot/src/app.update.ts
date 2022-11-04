@@ -11,7 +11,7 @@ import { Telegraf } from 'telegraf'
 import { actionButtons, createButton, deleteButton, doneButton, editButton, listButton } from './app.buttons'
 import { AppService } from './app.service'
 import { showList } from './app.utils'
-import { Context } from './context.interface'
+import { Context } from './app.interface'
 
 @Update()
 export class AppUpdate {
@@ -35,7 +35,13 @@ export class AppUpdate {
 	@Hears(listButton.text)
 	async listTask(ctx: Context) {
 		const todos = await this.appService.getAll()
-		await ctx.reply(showList(todos))
+		if(todos.length === 0) {
+			await ctx.reply("Твой список дел пуст");
+			
+		} else {
+			await ctx.reply(showList(todos))
+		}
+
 	}
 
 	@Hears(doneButton.text)
